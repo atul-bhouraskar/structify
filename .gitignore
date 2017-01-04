@@ -1,0 +1,6 @@
+*.pyc
+
+.idea/workspace.xml
+.tox/
+structify.egg-info/
+tests/__pycache__/

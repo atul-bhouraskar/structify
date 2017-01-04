@@ -2,7 +2,6 @@ from __future__ import absolute_import, unicode_literals
 
 import struct
 
-
 INT8_T = 'b'
 UINT8_T = 'B'
 INT16_T = 'h'
@@ -94,31 +93,31 @@ class MetaStruct(type):
 
             base_fmt = fmt
             fmt = byte_order + fmt
-            
+
             class StructData(object):
                 __slots__ = [field.name for field in fields]
                 packer = struct.Struct(fmt)
-    
+
                 def pack(self):
                     values = [getattr(self, f.name) for f in fields]
                     return self.packer.pack(*values)
-    
+
                 def pack_endian(self, byte_order_):
                     values = [getattr(self, f.name) for f in fields]
-                    return struct.pack(byte_order_+base_fmt, *values)
-    
+                    return struct.pack(byte_order_ + base_fmt, *values)
+
                 def unpack_values_(self, values):
                     index = 0
                     for f in fields:
                         setattr(self, f.name, values[index])
                         index += 1
-    
+
                 def unpack(self, string):
                     values = self.packer.unpack(string)
                     self.unpack_values_(values)
-    
+
                 def unpack_endian(self, string, byte_order_):
-                    values = struct.unpack(byte_order_+base_fmt, string)
+                    values = struct.unpack(byte_order_ + base_fmt, string)
                     self.unpack_values_(values)
 
             # This will be the __init__ function for the class we are creating

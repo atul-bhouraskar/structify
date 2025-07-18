@@ -12,6 +12,8 @@ UINT32_T = 'I'
 INT64_T = 'q'
 UINT64_T = 'Q'
 CHAR = 's'
+FLOAT32_T = 'f'
+FLOAT64_T = 'd'
 
 BYTE_ORDER_NATIVE = '@'
 BYTE_ORDER_NATIVE_STD = '='
@@ -21,7 +23,7 @@ BYTE_ORDER_NETWORK = '!'
 
 DEFAULT_BYTE_ORDER = BYTE_ORDER_LITTLE_ENDIAN
 
-FieldValueType = Union[int, str]
+FieldValueType = Union[int, float, str]
 
 
 class StructException(Exception):
@@ -61,39 +63,47 @@ class StructField:
         self.name = name
 
 
-def int8_t(default: int = None):
+def int8_t(default: int = None) -> StructField:
     return StructField(INT8_T, default=default)
 
 
-def uint8_t(default: int = None):
+def uint8_t(default: int = None) -> StructField:
     return StructField(UINT8_T, default=default)
 
 
-def int16_t(default: int = None):
+def int16_t(default: int = None) -> StructField:
     return StructField(INT16_T, default=default)
 
 
-def uint16_t(default: int = None):
+def uint16_t(default: int = None) -> StructField:
     return StructField(UINT16_T, default=default)
 
 
-def int32_t(default: int = None):
+def int32_t(default: int = None) -> StructField:
     return StructField(INT32_T, default=default)
 
 
-def uint32_t(default: int = None):
+def uint32_t(default: int = None) -> StructField:
     return StructField(UINT32_T, default=default)
 
 
-def int64_t(default: int = None):
+def int64_t(default: int = None) -> StructField:
     return StructField(INT64_T, default=default)
 
 
-def uint64_t(default: int = None):
+def uint64_t(default: int = None) -> StructField:
     return StructField(UINT64_T, default=default)
 
 
-def char(strlen: int, default: str = None):
+def float32_t(default: float = None) -> StructField:
+    return StructField(FLOAT32_T, default=default)
+
+
+def float64_t(default: float = None) -> StructField:
+    return StructField(FLOAT64_T, default=default)
+
+
+def char(strlen: int, default: str = None) -> StructField:
     return StructField(CHAR, default=default, str_len=strlen)
 
 
@@ -190,7 +200,7 @@ class FileHelper:
             raise StructException('File must be opened in binary mode')
         self.fp: IO = fp
 
-    def read_into(self, struct_obj):
+    def read_into(self, struct_obj: Struct):
         size = struct_obj.sizeof()
         bytes_: bytes = self.fp.read(size)
         if len(bytes_) < size:
@@ -198,5 +208,5 @@ class FileHelper:
         struct_obj.unpack(bytes_)
         return True
 
-    def write(self, struct_obj):
+    def write(self, struct_obj: Struct):
         return self.fp.write(struct_obj.pack())
